@@ -1,0 +1,42 @@
+﻿<Window
+    x:Class="AudioDiary.Views.LoginWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Вхід у щоденник"
+    Width="350"
+    Height="300"
+    WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="20">
+        <StackPanel VerticalAlignment="Center">
+            <Label Content="Логін:" FontWeight="Bold" />
+            <TextBox
+                Margin="0,0,0,10"
+                Padding="5"
+                Text="{Binding Username}" />
+
+            <Label Content="Пароль:" FontWeight="Bold" />
+            <!--  Для простоти MVVM використовуємо TextBox. У реальних проектах - PasswordBox  -->
+            <TextBox
+                Margin="0,0,0,20"
+                Padding="5"
+                Text="{Binding Password}" />
+
+            <Button
+                Height="35"
+                Margin="0,0,0,10"
+                Background="#4CAF50"
+                Command="{Binding LoginCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                Content="Увійти"
+                Foreground="White" />
+
+            <Button
+                Height="35"
+                Background="#2196F3"
+                Command="{Binding RegisterCommand}"
+                Content="Створити акаунт"
+                Foreground="White" />
+        </StackPanel>
+    </Grid>
+</Window>

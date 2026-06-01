@@ -1,0 +1,38 @@
+﻿<Window
+    x:Class="AudioDiary.Views.SettingsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Налаштування запису"
+    Width="400"
+    Height="250"
+    WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="15">
+        <StackPanel>
+            <Label Content="Оберіть мікрофон (вкл. Вебкамеру):" FontWeight="Bold" />
+            <ComboBox
+                Margin="0,0,0,20"
+                Padding="5"
+                ItemsSource="{Binding AvailableMicrophones}"
+                SelectedItem="{Binding SelectedMicrophone}" />
+
+            <Label Content="Чутливість мікрофона:" FontWeight="Bold" />
+            <Slider
+                Margin="0,0,0,20"
+                IsSnapToTickEnabled="True"
+                Maximum="1.0"
+                Minimum="0.1"
+                TickFrequency="0.1"
+                Value="{Binding Sensitivity}" />
+
+            <Button
+                Height="35"
+                Background="#FF9800"
+                Command="{Binding SaveCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                Content=" Зберегти налаштування"
+                FontWeight="Bold"
+                Foreground="White" />
+        </StackPanel>
+    </Grid>
+</Window>

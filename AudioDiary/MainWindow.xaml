@@ -1,0 +1,104 @@
+﻿<Window
+    x:Class="AudioDiary.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Мій Аудіощоденник"
+    Width="950"
+    Height="480"
+    WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+
+        <!--  СПИСОК ЗЛІВА   -->
+        <ListBox
+            Grid.Column="0"
+            Margin="0,0,10,0"
+            ItemsSource="{Binding Entries}"
+            SelectedItem="{Binding SelectedEntry}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="5">
+                        <!--  Дата запису  -->
+                        <TextBlock FontWeight="Bold" Text="{Binding CreationDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" />
+                        <!--  Автоматичні позначки  -->
+                        <TextBlock
+                            Margin="0,2,0,0"
+                            FontSize="11"
+                            Foreground="#2196F3"
+                            Text="{Binding Tags}"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!--  РОБОЧА ОБЛАСТЬ СПРАВА  -->
+        <StackPanel Grid.Column="1">
+            <Label Content="Ваш текст:" FontWeight="Bold" />
+            <TextBox
+                Height="230"
+                AcceptsReturn="True"
+                Text="{Binding CurrentText, UpdateSourceTrigger=PropertyChanged}"
+                TextWrapping="Wrap"
+                VerticalScrollBarVisibility="Auto" />
+
+            <!--  Рядок для відображення позначок під полем вводу  -->
+            <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+                <Label
+                    Content="Позначки:"
+                    FontWeight="Bold"
+                    Foreground="Gray" />
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontWeight="Bold"
+                    Foreground="#2196F3"
+                    Text="{Binding CurrentTags}" />
+            </StackPanel>
+
+            <!--  Панель з кнопками  -->
+            <StackPanel
+                Margin="0,10,0,0"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <Button
+                    Width="110"
+                    Margin="5"
+                    Command="{Binding OpenSettingsCommand}"
+                    Content="⚙ Налаштування" />
+                <Button
+                    Width="100"
+                    Margin="5"
+                    Command="{Binding CreateNewCommand}"
+                    Content="📄 Новий запис" />
+                <Button
+                    Width="90"
+                    Margin="5"
+                    Background="#F44336"
+                    Command="{Binding DeleteEntryCommand}"
+                    Content="🗑 Видалити"
+                    FontWeight="Bold"
+                    Foreground="White" />
+
+                <Button
+                    Width="90"
+                    Margin="5"
+                    Command="{Binding StartRecordingCommand}"
+                    Content="🎤 Почати" />
+                <Button
+                    Width="90"
+                    Margin="5"
+                    Command="{Binding StopRecordingCommand}"
+                    Content="⏹ Зупинити" />
+                <Button
+                    Width="90"
+                    Margin="5"
+                    Command="{Binding SaveEntryCommand}"
+                    Content="💾 Зберегти" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
