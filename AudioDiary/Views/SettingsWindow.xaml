@@ -4,33 +4,32 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Налаштування запису"
     Width="400"
-    Height="250"
+    Height="284"
     WindowStartupLocation="CenterOwner">
 
     <Grid Margin="15">
         <StackPanel>
             <Label Content="Оберіть мікрофон (вкл. Вебкамеру):" FontWeight="Bold" />
             <ComboBox
-                Margin="0,0,0,20"
-                Padding="5"
-                ItemsSource="{Binding AvailableMicrophones}"
-                SelectedItem="{Binding SelectedMicrophone}" />
+                x:Name="CmbMicrophones"
+                Height="30"
+                Margin="0,5,0,20" />
 
             <Label Content="Чутливість мікрофона:" FontWeight="Bold" />
             <Slider
-                Margin="0,0,0,20"
+                x:Name="SliderSensitivity"
+                Height="30"
+                Margin="0,5,0,20"
                 IsSnapToTickEnabled="True"
-                Maximum="1.0"
-                Minimum="0.1"
-                TickFrequency="0.1"
-                Value="{Binding Sensitivity}" />
-
+                Maximum="5"
+                Minimum="1"
+                TickFrequency="0.5" />
             <Button
-                Height="35"
-                Background="#FF9800"
-                Command="{Binding SaveCommand}"
-                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
-                Content=" Зберегти налаштування"
+                Height="40"
+                Background="#FFA500"
+                Click="BtnSaveSettings_Click"
+                Content="Зберегти налаштування"
+                FontSize="14"
                 FontWeight="Bold"
                 Foreground="White" />
         </StackPanel>

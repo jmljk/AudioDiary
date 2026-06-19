@@ -14,7 +14,7 @@ namespace AudioDiary.Commands
             _canExecute = canExecute;
         }
 
-        // Зверніть увагу на object? параметр
+        
         public bool CanExecute(object? parameter) => _canExecute == null || _canExecute(parameter);
 
         public void Execute(object? parameter) => _execute(parameter);

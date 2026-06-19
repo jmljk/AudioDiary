@@ -6,6 +6,7 @@ using System.Windows.Input;
 using AudioDiary.Commands;
 using AudioDiary.Models;
 using AudioDiary.Views;
+using AudioDiary.Services;
 
 namespace AudioDiary.ViewModels
 {
@@ -47,7 +48,11 @@ namespace AudioDiary.ViewModels
 
         private void Login(object windowParameter)
         {
-            var user = _users.Find(u => u.Username == Username && u.Password == Password);
+            
+            string hashedInput = PasswordHelper.HashPassword(Password);
+
+            
+            var user = _users.FirstOrDefault(u => u.Username == Username && u.Password == hashedInput);
             if (user != null)
             {
                 // Відкриваємо головне вікно, передаємо дані користувача
@@ -77,7 +82,7 @@ namespace AudioDiary.ViewModels
                 return;
             }
 
-            _users.Add(new UserAccount { Username = Username, Password = Password });
+            _users.Add(new UserAccount { Username = Username, Password = PasswordHelper.HashPassword(Password) });
             SaveUsers();
             MessageBox.Show("Акаунт створено! Тепер ви можете увійти.", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);
         }

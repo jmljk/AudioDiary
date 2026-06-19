@@ -7,6 +7,9 @@ using System.Windows.Input;
 using AudioDiary.Models;
 using AudioDiary.Services;
 using AudioDiary.Commands;
+using AudioDiary.Views;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace AudioDiary.ViewModels
 {
@@ -15,6 +18,7 @@ namespace AudioDiary.ViewModels
         private SpeechRecognitionService _speechService;
         private FileService _fileService;
         private UserAccount _currentUser;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public ObservableCollection<DiaryEntry> Entries { get; set; }
 
@@ -30,9 +34,14 @@ namespace AudioDiary.ViewModels
                 if (_selectedEntry != null)
                 {
                     CurrentText = _selectedEntry.TextContent;
-                    CurrentTags = _selectedEntry.Tags; 
+                    CurrentTags = _selectedEntry.Tags;
+
                 }
             }
+        }
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         private string _currentText;
@@ -71,7 +80,7 @@ namespace AudioDiary.ViewModels
             _speechService = new SpeechRecognitionService();
             _fileService = new FileService();
 
-            Entries = new ObservableCollection<DiaryEntry>(_fileService.LoadEntries());
+            Entries = new ObservableCollection<DiaryEntry>(_fileService.LoadEntries(_currentUser.Username));
 
             _speechService.TextRecognized += (s, text) =>
             {
@@ -93,23 +102,23 @@ namespace AudioDiary.ViewModels
             DeleteEntryCommand = new RelayCommand(_ => DeleteEntry());
         }
 
-        // АВТОМАТИЧНА ГЕНЕРАЦІЯ ПОЗНАЧОК
+        
         private string GenerateTags(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) return "#запис";
 
-            // Очищаємо текст від службових повідомлень програми, які виводяться на екран
+            
             string cleanText = text.Replace(" [Слухаю мікрофон...]", "")
                                    .Replace(" [Запис зупинено]", "")
                                    .Replace("[Запис пішов... мікрофон активний]", "");
 
-            // Розбиваємо текст на окремі слова
+            
             var words = cleanText.Split(new[] { ' ', '.', ',', '!', '?', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 
-            // Список службових слів (стоп-слів), які часто зустрічаються, але не мають ставати тегами
+            
             var stopWords = new[] { "це", "тут", "там", "вже", "все", "під", "для", "про", "але", "або", "ніж", "мене", "мені", "тебе" };
 
-            // Знижуємо поріг довжини до 4 літер і прибираємо сполучники/прийменники
+           
             var tags = words.Select(w => w.Trim().ToLower())
                             .Where(w => w.Length >= 4 && !stopWords.Contains(w))
                             .Select(w => "#" + w)
@@ -117,7 +126,7 @@ namespace AudioDiary.ViewModels
                             .Take(3)
                             .ToList();
 
-            // ПЛАН Б: Якщо модель розпізнала лише зовсім короткі слова
+            
             if (tags.Count == 0)
             {
                 tags = words.Select(w => w.Trim().ToLower())
@@ -128,7 +137,6 @@ namespace AudioDiary.ViewModels
                             .ToList();
             }
 
-            // Якщо текст взагалі не містить придатних слів
             if (tags.Count == 0)
             {
                 return "#щоденник #нотатка";
@@ -159,7 +167,7 @@ namespace AudioDiary.ViewModels
                 MessageBox.Show("Новий запис збережено з автоматичними позначками!", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
-            _fileService.SaveEntries(new System.Collections.Generic.List<DiaryEntry>(Entries));
+            _fileService.SaveEntries(Entries, _currentUser.Username);
 
             SelectedEntry = null;
             CurrentText = string.Empty;
@@ -174,7 +182,7 @@ namespace AudioDiary.ViewModels
             if (result == MessageBoxResult.Yes)
             {
                 Entries.Remove(SelectedEntry);
-                _fileService.SaveEntries(new System.Collections.Generic.List<DiaryEntry>(Entries));
+                _fileService.SaveEntries(Entries, _currentUser.Username);
                 SelectedEntry = null;
                 CurrentText = string.Empty;
                 CurrentTags = string.Empty;
@@ -183,12 +191,21 @@ namespace AudioDiary.ViewModels
 
         private void OpenSettings()
         {
-            var settingsWindow = new AudioDiary.Views.SettingsWindow(_currentUser);
-            settingsWindow.Owner = Application.Current.MainWindow;
+           
+            var settingsWindow = new SettingsWindow(_currentUser);
+
+           
+            Window mainWin = System.Windows.Application.Current.MainWindow;
+
+            
+            if (mainWin != null && mainWin != settingsWindow)
+            {
+                settingsWindow.Owner = mainWin;
+            }
+
+            
+            settingsWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             settingsWindow.ShowDialog();
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

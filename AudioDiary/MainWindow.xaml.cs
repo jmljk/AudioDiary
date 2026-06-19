@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using AudioDiary.Models; // Обов'язково додаємо посилання на моделі
+using AudioDiary.Models;
 
 namespace AudioDiary.Views 
 {

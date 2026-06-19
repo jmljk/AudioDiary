@@ -13,7 +13,7 @@
             <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
 
-        <!--  СПИСОК ЗЛІВА   -->
+        <!--  СПИСОК ЗЛІВА  -->
         <ListBox
             Grid.Column="0"
             Margin="0,0,10,0"
@@ -68,18 +68,18 @@
                     Width="110"
                     Margin="5"
                     Command="{Binding OpenSettingsCommand}"
-                    Content="⚙ Налаштування" />
+                    Content="Налаштування" />
                 <Button
                     Width="100"
                     Margin="5"
                     Command="{Binding CreateNewCommand}"
-                    Content="📄 Новий запис" />
+                    Content="Новий запис" />
                 <Button
                     Width="90"
                     Margin="5"
                     Background="#F44336"
                     Command="{Binding DeleteEntryCommand}"
-                    Content="🗑 Видалити"
+                    Content="Видалити"
                     FontWeight="Bold"
                     Foreground="White" />
 
@@ -87,17 +87,17 @@
                     Width="90"
                     Margin="5"
                     Command="{Binding StartRecordingCommand}"
-                    Content="🎤 Почати" />
+                    Content="Почати" />
                 <Button
                     Width="90"
                     Margin="5"
                     Command="{Binding StopRecordingCommand}"
-                    Content="⏹ Зупинити" />
+                    Content="Зупинити" />
                 <Button
                     Width="90"
                     Margin="5"
                     Command="{Binding SaveEntryCommand}"
-                    Content="💾 Зберегти" />
+                    Content="Зберегти" />
             </StackPanel>
         </StackPanel>
     </Grid>
