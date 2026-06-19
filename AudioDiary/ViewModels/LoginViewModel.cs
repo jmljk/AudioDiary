@@ -43,7 +43,9 @@ namespace AudioDiary.ViewModels
 
         private void SaveUsers()
         {
-            File.WriteAllText(_usersFile, JsonSerializer.Serialize(_users));
+        
+            var fileService = new AudioDiary.Services.FileService();
+            fileService.SaveUsers(_users);
         }
 
         private void Login(object windowParameter)
