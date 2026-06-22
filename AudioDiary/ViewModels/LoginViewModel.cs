@@ -30,15 +30,8 @@ namespace AudioDiary.ViewModels
 
         private void LoadUsers()
         {
-            if (File.Exists(_usersFile))
-            {
-                string json = File.ReadAllText(_usersFile);
-                _users = JsonSerializer.Deserialize<List<UserAccount>>(json) ?? new List<UserAccount>();
-            }
-            else
-            {
-                _users = new List<UserAccount>();
-            }
+            var fileService = new AudioDiary.Services.FileService();
+            _users = fileService.GetUsers();
         }
 
         private void SaveUsers()

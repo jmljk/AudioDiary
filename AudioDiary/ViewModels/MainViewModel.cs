@@ -102,47 +102,43 @@ namespace AudioDiary.ViewModels
             DeleteEntryCommand = new RelayCommand(_ => DeleteEntry());
         }
 
-        
-        private string GenerateTags(string text)
+
+        public string GenerateTags(string recognizedText)
         {
-            if (string.IsNullOrWhiteSpace(text)) return "#запис";
+            if (string.IsNullOrWhiteSpace(recognizedText)) return "";
 
-            
-            string cleanText = text.Replace(" [Слухаю мікрофон...]", "")
-                                   .Replace(" [Запис зупинено]", "")
-                                   .Replace("[Запис пішов... мікрофон активний]", "");
+            // словник українських стоп-слів 
+            var stopWords = new HashSet<string> {
+        "його", "було", "буде", "коли", "дуже", "також", "який", "яка", "яке",
+        "тільки", "навіть", "просто", "після", "перед", "через", "тому", "якщо",
+        "щоб", "мене", "мені", "тебе", "тобі", "собі", "бути", "вони", "вона"
+    };
 
-            
-            var words = cleanText.Split(new[] { ' ', '.', ',', '!', '?', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+            // очищаємо від пунктуації та розбиваємо на слова
+            var punctuation = recognizedText.Where(char.IsPunctuation).Distinct().ToArray();
+            var allWords = recognizedText.ToLower()
+                .Split(new[] { ' ', '\n', '\r', '\t' }.Concat(punctuation).ToArray(), StringSplitOptions.RemoveEmptyEntries);
 
-            
-            var stopWords = new[] { "це", "тут", "там", "вже", "все", "під", "для", "про", "але", "або", "ніж", "мене", "мені", "тебе" };
+            // слова від 4 символів, яких немає у стоп-листі
+            var validWords = allWords.Where(w => w.Length >= 4 && !stopWords.Contains(w)).ToList();
 
-           
-            var tags = words.Select(w => w.Trim().ToLower())
-                            .Where(w => w.Length >= 4 && !stopWords.Contains(w))
-                            .Select(w => "#" + w)
-                            .Distinct()
-                            .Take(3)
-                            .ToList();
-
-            
-            if (tags.Count == 0)
+            // розумних слів назбиралося менше 3, знижуємо поріг до 3 символів
+            if (validWords.Count < 3)
             {
-                tags = words.Select(w => w.Trim().ToLower())
-                            .Where(w => w.Length >= 3 && !stopWords.Contains(w))
-                            .Select(w => "#" + w)
-                            .Distinct()
-                            .Take(2)
-                            .ToList();
+                validWords = allWords.Where(w => w.Length >= 3 && !stopWords.Contains(w)).ToList();
             }
 
-            if (tags.Count == 0)
-            {
-                return "#щоденник #нотатка";
-            }
+            // слова, які повторюються найчастіше
+            var topTags = validWords
+                .GroupBy(w => w)                            // групуємо однакові слова
+                .Select(g => new { Word = g.Key, Count = g.Count() }) // рахуємо, скільки разів кожне зустрічається
+                .OrderByDescending(x => x.Count)            // спочатку найчастіші
+                .ThenByDescending(x => x.Word.Length)       // частота однакова = пріоритет довшим словам
+                .Take(3)                                    // топ-3
+                .Select(x => "#" + x.Word)                  // хештег
+                .ToList();
 
-            return string.Join(" ", tags);
+            return string.Join(" ", topTags);
         }
         private void SaveEntry()
         {
